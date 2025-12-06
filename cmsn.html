@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday!</title>
+
+<style>
+    body {
+        background: #ffeaf3;
+        font-family: 'Poppins', sans-serif;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    /* Nút mở quà */
+    .btn {
+        padding: 15px 32px;
+        background: #ff3d9b;
+        border: none;
+        color: white;
+        font-size: 24px;
+        border-radius: 15px;
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Hoa SVG */
+    .flower {
+        width: 180px;
+        opacity: 0;
+        position: absolute;
+        left: 50%;
+        top: 22%;
+        transform: translateX(-50%) scale(0);
+        transition: 1.5s;
+    }
+
+    /* Bóng bay SVG */
+    .balloon {
+        position: absolute;
+        bottom: -150px;
+        width: 70px;
+        animation: floatUp 7s linear infinite;
+    }
+
+    @keyframes floatUp {
+        from { transform: translateY(0); }
+        to { transform: translateY(-130vh); }
+    }
+
+    /* Lời chúc */
+    #message {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #ff0066;
+        font-size: 30px;
+        text-align: center;
+        width: 90%;
+        opacity: 0;
+        min-height: 120px;
+        transition: 0.7s;
+    }
+</style>
+</head>
+
+<body>
+
+<button class="btn" id="startBtn">Mở quà 🎁</button>
+
+<!-- SVG hoa (không bao giờ lỗi) -->
+<div class="flower" id="flower">
+<svg width="180" height="180" viewBox="0 0 200 200">
+<circle cx="100" cy="100" r="20" fill="#ffcc00"/>
+<circle cx="60" cy="60" r="35" fill="#ff6699"/>
+<circle cx="140" cy="60" r="35" fill="#ff6699"/>
+<circle cx="60" cy="140" r="35" fill="#ff6699"/>
+<circle cx="140" cy="140" r="35" fill="#ff6699"/>
+</svg>
+</div>
+
+<div id="message"></div>
+
+<!-- NHẠC HAPPY BIRTHDAY-->
+<audio id="bgm" autoplay loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+
+<script>
+document.getElementById("startBtn").onclick = start;
+
+function start() {
+    const music = document.getElementById("bgm");
+    music.play().catch(() => {
+        alert("Hãy nhấn OK để bật nhạc ❤️");
+        music.play();
+    });
+
+    document.getElementById("startBtn").style.display = "none";
+
+    showFlower();
+    releaseBalloons();
+    startMessages();
+}
+
+
+function showFlower() {
+    const f = document.getElementById("flower");
+    f.style.opacity = 1;
+    f.style.transform = "translateX(-50%) scale(1.1)";
+}
+
+function releaseBalloons() {
+    for (let i = 0; i < 12; i++) {
+        let b = document.createElement("img");
+        b.className = "balloon";
+        b.src = "data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='80' height='140'>\
+<ellipse cx='40' cy='50' rx='35' ry='45' fill='%23ff4da6'/>\
+<line x1='40' y1='95' x2='40' y2='140' stroke='%23000000' stroke-width='2'/>\
+</svg>";
+        b.style.left = Math.random() * 100 + "vw";
+        b.style.animationDuration = (5 + Math.random() * 5) + "s";
+        document.body.appendChild(b);
+    }
+}
+
+// =======================
+// LỜI CHÚC CHẠY TỪNG CHỮ
+// =======================
+
+const lines = [
+    "Chúc bố sinh nhật vui vẻ, mong tuổi mới bố sẽ không phải lo nghĩ nhiều về cuộc sống.",
+    "Mong bố không phải lo ốm đau bệnh tật.",
+    "Con chúc bố có một sinh nhật thật vui vẻ và ý nghĩa 🎂💖"
+];
+
+let current = 0;
+let charIndex = 0;
+let deleting = false;
+
+function startMessages() {
+    setTimeout(typeEffect, 1200);
+}
+
+function typeEffect() {
+    const msg = document.getElementById("message");
+    msg.style.opacity = 1;
+
+    const fullText = lines[current];
+
+    if (!deleting) {
+        msg.innerHTML = fullText.substring(0, charIndex + 1);
+        charIndex++;
+
+        if (charIndex === fullText.length) {
+            setTimeout(() => deleting = true, 1200);
+        }
+    } else {
+        msg.innerHTML = fullText.substring(0, charIndex - 1);
+        charIndex--;
+
+        if (charIndex === 0) {
+            deleting = false;
+            current++;
+            if (current >= lines.length) return;
+        }
+    }
+
+    setTimeout(typeEffect, deleting ? 40 : 50);
+}
+</script>
+</body>
+</html>
